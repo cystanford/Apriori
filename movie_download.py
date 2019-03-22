@@ -14,6 +14,7 @@ file_name = './' + director + '.csv'
 base_url = 'https://movie.douban.com/subject_search?search_text='+director+'&cat=1002&start='
 out = open(file_name,'w', newline='', encoding='utf-8-sig')
 csv_write = csv.writer(out, dialect='excel')
+flags=[]
 # 下载指定页面的数据
 def download(request_url):
 	driver.get(request_url)
@@ -37,12 +38,14 @@ def download(request_url):
 		print(name_list.text)
 		names = name_list.text.split('/')
 		# 判断导演是否为指定的director
-		if names[0].strip() == director:
+		if names[0].strip() == director and movie.text not in flags:
 			# 将第一个字段设置为电影名称
 			names[0] = movie.text
+			flags.append(movie.text)
 			csv_write.writerow(names)
 	print('OK') # 代表这页数据下载成功
-	if num >= 15:
+	print(num)
+	if num >= 14: #有可能一页会有14个电影
 		# 继续下一页
 		return True
 	else:
